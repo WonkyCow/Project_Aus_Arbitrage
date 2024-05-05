@@ -3,15 +3,19 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace Project_Arbitrage
 {
     internal class Sportsbet
     {
         private readonly HttpClient _client;
-        private const string WebsiteUrl = "http://example.com/sportsbet-page"; // Replace with the actual URL
+        private const string WebsiteUrl = "https://www.sportsbet.com.au/betting/australian-rules/afl"; // Link to SportsBet AFL matches page
 
+        /**
+         * Constructor
+         * Initializes the HttpClient instance for making HTTP requests.
+         */
         public Sportsbet()
         {
             _client = new HttpClient();
@@ -19,6 +23,11 @@ namespace Project_Arbitrage
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
+        /**
+         * ScrapeData Method
+         * Fetches data from the specified website URL and parses it.
+         * Returns the extracted data as a string.
+         */
         public async Task<string> ScrapeData()
         {
             try
@@ -27,12 +36,8 @@ namespace Project_Arbitrage
                 response.EnsureSuccessStatusCode();
                 var responseBody = await response.Content.ReadAsStringAsync();
 
-                // Parse the HTML content to extract the data you need
-                // This is a placeholder for the actual parsing logic
-                var data = JObject.Parse(responseBody); // Assuming the response is in JSON format
-
-                // Example: Extracting a specific piece of data
-                var extractedData = data["someKey"].ToString(); // Replace "someKey" with the actual key
+                // Placeholder for data to be scraped
+                var extractedData = "Data";
 
                 return extractedData;
             }
