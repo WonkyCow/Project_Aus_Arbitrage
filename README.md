@@ -14,5 +14,10 @@ This project automates the detection of arbitrage opportunities in sports bettin
 
 ## Current Status/Recent Changes
 
-- **Discord Notifications**: Working as intended
-- **Scraping**: Not working. 
+- **Discord Notifications**: Notifications can be sent to Discord.
+- **Scraping**: Successfully gathers all data from Sportsbet
+
+- Only presents data for the first game in the list on sportsbet- data is gathered for all available games in the "Matches" list, although will need to be managed to be usable.
+- Discord message currently just sends the data scraped from Sportsbet in a readable format to the linked webhook.
+- No arbitrage calculations are being done at the current time
+- Ladbrokes scraping is in progress
