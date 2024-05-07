@@ -17,19 +17,46 @@ namespace Project_Arbitrage
          */
         static async Task Main(string[] args)
         {
-            string webhookUrl = "https://discord.com/api/webhooks/1236561732395077705/bNT7gn5pwS4KHBYwxaMResYgueYxUM02EL_8EI1KEold1K9r3rUgUax7uXfqj2PI9xn2";
-            string sportsbet = new Sportsbet().ScrapeData().Result; // Assuming ScrapeData is an async method
+            string result="";
+            string webhookUrl = "{Enter your Discord URL here!}";
+            //string result = new Sportsbet().ScrapeData().Result; //old debug call
 
-            if (!string.IsNullOrEmpty(sportsbet)) //sends sportsbet data to discord if any was gathered
+            var dataList = new List<BettingSiteData>();
+
+            var sportsbetData = await new Sportsbet().ScrapeData();
+            var ladbrokesData = await new Ladbrokes().ScrapeData();
+
+            dataList.Add(sportsbetData);
+            dataList.Add(ladbrokesData);
+
+            var calculator = new ArbitrageCalculator();
+            result = calculator.CalculateArbitrage(dataList);
+
+            try
             {
-                await SendDiscordNotification(webhookUrl, sportsbet);
+                if (!string.IsNullOrEmpty(result)) //sends data to discord if any was gathered
+                {
+                    await SendDiscordNotification(webhookUrl, result);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Arbitrage was detected! Check your Discord webhook channel for information.");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("No Arbitrage was detected.");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                /**else //sends error message if no data was gathered
+                {
+                    Console.WriteLine("Error! No data was retrieved/or an unknown error occured!");
+                    string errorMessage = "Error! No data was retrieved/or an unknown error occured!";
+                    await SendDiscordNotification(webhookUrl, errorMessage);
+                }*/ //debug code
             }
-            else //sends error message if no data was gathered
+            catch
             {
-                Console.WriteLine("Error! No data was retrieved/or an unknown error occured!");
-                string errorMessage = "Error! No data was retrieved/or an unknown error occured!";
-                await SendDiscordNotification(webhookUrl, errorMessage);
-
+                Console.WriteLine("Warning! Error! Unknown error occured in Task Main!");
             }
         }
         /**

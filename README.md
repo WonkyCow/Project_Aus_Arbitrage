@@ -15,9 +15,10 @@ This project automates the detection of arbitrage opportunities in sports bettin
 ## Current Status/Recent Changes
 
 - **Discord Notifications**: Notifications can be sent to Discord.
-- **Scraping**: Successfully gathers all data from Sportsbet
+- **Scraping**: Successfully gathers all data from Sportsbet and Ladbrokes
+- **Detection**: Working between Sportsbet and Labrokes *only*, for the first game in the list on the webpage for AFL H2H.
 
-- Only presents data for the first game in the list on sportsbet- data is gathered for all available games in the "Matches" list, although will need to be managed to be usable.
-- Discord message currently just sends the data scraped from Sportsbet in a readable format to the linked webhook.
-- No arbitrage calculations are being done at the current time
-- Ladbrokes scraping is in progress
+- No Discord message is sent if no Aritrage is found: A console message is sent.
+- Discord message is sent if an Arbitrage is found, including the teams playing, game time and date, prices for the odds, and bookmakers providing the prices.
+- Including more bookmakers will be added in future.
+- Currently working on being able to check multiple games at once- currently only checks the first, this is an issue if there are multiple games on in one day or within a short span of eachother.

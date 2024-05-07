@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Project_Arbitrage
 {
-    internal class BettingSiteData
+    public class BettingSiteData
     {
+        public string GameKey { get; set; }
+        public string GameName { get; set; }
         public string SiteName { get; set; }
         public string Time { get; set; }
         public string Date { get; set; }
@@ -16,4 +18,5 @@ namespace Project_Arbitrage
         public decimal Team1Price { get; set; }
         public decimal Team2Price { get; set; }
     }
+
 }
