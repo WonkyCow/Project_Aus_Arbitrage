@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
-namespace Project_Arbitrage
+namespace Project_Arbitrage.DebugScrapers
 {
-    internal class Sportsbet
+    internal class SportsbetDebug
     {
         private IWebDriver _driver;
 
-        public Sportsbet()
+        public SportsbetDebug()
         {
             var chromeOptions = new ChromeOptions();
             chromeOptions.AddArgument("--headless"); // Run in headless mode
@@ -35,49 +35,49 @@ namespace Project_Arbitrage
                 // Locate the price elements by their data-automation-id
                 List<IWebElement> priceElements = _driver.FindElements(By.CssSelector("[data-automation-id='price-text']")).ToList();
 
-                /**
+                
                 Console.WriteLine("List of all prices");
                 foreach (var element in priceElements) //debug code
                 {
                     Console.WriteLine(element.Text);
-                }*/
+                }   
 
                 // Extract the price text for both teams
                 string priceTeam1 = priceElements[0].Text.Trim(); // First element
                 string priceTeam2 = priceElements[1].Text.Trim(); // Second element
 
-                //Console.WriteLine($"Price for Team 1: {priceTeam1}, Price for Team 2: {priceTeam2}");
+                Console.WriteLine($"Price for Team 1: {priceTeam1}, Price for Team 2: {priceTeam2}");
 
                 // Locate the team name elements by their data-automation-id
                 List<IWebElement> teamNameElements = _driver.FindElements(By.CssSelector("[data-automation-id='participant-one'], [data-automation-id='participant-two']")).ToList();
 
-                /**
+                
                 Console.WriteLine("List of all team names");
                 foreach (var element in teamNameElements) //debug code
                 {
                     Console.WriteLine(element.Text);
-                }*/
+                }
 
                 // Extract the team names
                 string team1Name = teamNameElements[0].Text.Trim(); // First element
                 string team2Name = teamNameElements[1].Text.Trim(); // Second element
 
-                //Console.WriteLine($"Team 1: {team1Name}, Team 2: {team2Name}");
+                Console.WriteLine($"Team 1: {team1Name}, Team 2: {team2Name}");
 
                 // Locate the time/date element/s by their data-automation-id
                 List<IWebElement> gameDateTimeElements = _driver.FindElements(By.CssSelector("[data-automation-id='competition-event-card-time']")).ToList();
 
-                /**
+                
                 Console.WriteLine("List of all game times/dates");
                 foreach (var element in gameDateTimeElements) //debug code
                 {
                     Console.WriteLine(element.Text);
-                }*/
+                }
 
                 //extract date/time
                 string gameDateTime = gameDateTimeElements[0].Text.Trim(); // Game Date/Time
 
-                //Console.WriteLine($"Time/Date Data: {gameDateTime}");
+                Console.WriteLine($"Time/Date Data: {gameDateTime}");
 
                 // Declare standardizedDate and standardizedTime outside the if block
                 string standardizedDate = "";
@@ -111,14 +111,14 @@ namespace Project_Arbitrage
                     }
                 }
 
-                //Console.WriteLine($"standarised date: {standardizedDate}");
-                //Console.WriteLine($"standarised time: {standardizedTime}");
+                Console.WriteLine($"standarised date: {standardizedDate}");
+                Console.WriteLine($"standarised time: {standardizedTime}");
 
 
                 // Construct the notification message
                 string message = $"**Sportsbet Alert**: Prices detected for game between **{team1Name} and {team2Name}** on **{standardizedDate}** at **{standardizedTime}**. Odds are **{priceTeam1}** for {team1Name}, **{priceTeam2}** for {team2Name}.";
 
-                string gameName = ($"{team1Name} vs {team2Name}");              
+                string gameName = $"{team1Name} vs {team2Name}";
 
                 BettingSiteData sportsbetData = new BettingSiteData
                 {
