@@ -1,82 +1,77 @@
-﻿using System;
-using System.Net.Http;
-using System.Text;
+﻿using Arbitrage_Test_Bot;
+using DSharpPlus;
+using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.EventArgs;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using TestApp;
+using DSharpPlus.SlashCommands;
+using Project_Arbitrage.commands.PrefixCommands;
+using Project_Arbitrage.commands.slashCommands;
+using Project_Arbitrage;
 
-namespace Project_Arbitrage
+namespace TestApp
 {
-    class Program
+    internal class Program
     {
-        static readonly HttpClient client = new HttpClient();
+        private static DiscordClient Client { get; set; }
+        private static CommandsNextExtension Commands { get; set; }
 
-
-        /**
-         * Main Call function
-         * Defines the information to be sent to the discord webhook URL, and calls the SendDiscordNotification
-         */
         static async Task Main(string[] args)
         {
-            string result="";
-            string webhookUrl = "{Enter your Discord URL here!}";
-            //string result = new Sportsbet().ScrapeData().Result; //old debug call
+            //declare new json reader
+            var jsonReader = new JSONReader();
+            //call json reader
+            await jsonReader.ReadJSON();
 
-            var dataList = new List<BettingSiteData>();
-
-            var sportsbetData = await new Sportsbet().ScrapeData();
-            var ladbrokesData = await new Ladbrokes().ScrapeData();
-
-            dataList.Add(sportsbetData);
-            dataList.Add(ladbrokesData);
-
-            var calculator = new ArbitrageCalculator();
-            result = calculator.CalculateArbitrage(dataList);
-
-            try
+            //set the Discord App Configuration
+            var discordConfig = new DiscordConfiguration()
             {
-                if (!string.IsNullOrEmpty(result)) //sends data to discord if any was gathered
-                {
-                    await SendDiscordNotification(webhookUrl, result);
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Arbitrage was detected! Check your Discord webhook channel for information.");
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("No Arbitrage was detected.");
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                /**else //sends error message if no data was gathered
-                {
-                    Console.WriteLine("Error! No data was retrieved/or an unknown error occured!");
-                    string errorMessage = "Error! No data was retrieved/or an unknown error occured!";
-                    await SendDiscordNotification(webhookUrl, errorMessage);
-                }*/ //debug code
-            }
-            catch
+                Intents = DiscordIntents.All, 
+                Token = jsonReader.token,
+                TokenType = TokenType.Bot,
+                AutoReconnect = true
+            };
+
+            Client = new DiscordClient(discordConfig);
+
+            Client.Ready += Client_Ready;
+
+
+            //set the command configuration
+            var commandsConfig = new CommandsNextConfiguration()
             {
-                Console.WriteLine("Warning! Error! Unknown error occured in Task Main!");
-            }
+                StringPrefixes = new string[] { jsonReader.prefix },
+                EnableMentionPrefix = true,
+                EnableDefaultHelp = true
+            };
+
+            //initialise the CommandsNextExtension property
+            Commands = Client.UseCommandsNext(commandsConfig);
+
+            //Enable slash commands
+            var slashCommandsConfiguration = Client.UseSlashCommands();
+
+            //register command class
+            Commands.RegisterCommands<TestCommand>();
+
+            //register slash commands
+            slashCommandsConfiguration.RegisterCommands<TestCommandSlash>();
+            slashCommandsConfiguration.RegisterCommands<ArbitrageChecker>();
+
+
+            //Connect to the discord gateway
+            await Client.ConnectAsync();
+
+            //Ensure the bot runs indefinitely, while the program is running
+            await Task.Delay(-1);
         }
-        /**
-         * Send Notification function
-         * Sends a message to discord via a Discord webhook
-         * Compiles information from the Main function into a HTTPs request
-         */
-        static async Task SendDiscordNotification(string webhookUrl, string message)
-        {
-            var content = new StringContent("{\"content\": \"" + message + "\", \"username\": \"Aussie Arbirage\"}", Encoding.UTF8, "application/json"); //http request to the Discord API/webhook
-            var response = await client.PostAsync(webhookUrl, content);
 
-            if (response.IsSuccessStatusCode) //returns request code to console
-            {
-                Console.WriteLine("Payload delivered successfully, code " + response.StatusCode + ".");
-            }
-            else
-            {
-                Console.WriteLine($"Failed to send message. Status code: {response.StatusCode}");
-            }
+        private static Task Client_Ready(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs args)
+        {
+            return Task.CompletedTask;
         }
     }
-}
+}   

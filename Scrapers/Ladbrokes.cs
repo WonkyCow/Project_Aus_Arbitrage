@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
-namespace Project_Arbitrage
+namespace Project_Arbitrage.Scrapers
 {
     internal class Ladbrokes
     {
@@ -127,11 +127,11 @@ namespace Project_Arbitrage
                 // Construct the notification message
                 //old code - could still be used for debug
                 //string message = $"**Ladbrokes Alert**: Prices detected for game between **{team1Name} and {team2Name}** on **{standardizedDate}** at **{standardizedTime}**. Odds are **{priceTeam1}** for {team1Name}, **{priceTeam2}** for {team2Name}.";
-               
+
 
                 //string gameName = ($"{team1Name} vs {team2Name}"); //currently unused
 
-                string gameName = ($"{team1Name} vs {team2Name}"); //currently unused
+                string gameName = $"{team1Name} vs {team2Name}"; //currently unused
 
                 BettingSiteData ladbrokesData = new BettingSiteData
                 {
